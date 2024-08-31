@@ -1,7 +1,7 @@
 use chrono::Utc;
 use clap::Parser;
 use log::info;
-use yarl::{cli::{Cli, Command}, database::{self,  Transaction, TransactionKind}, log::{panic_hook, Logger}};
+use yarl::{cli::{Cli, Command}, database::{self, get_balance, Transaction, TransactionKind}, log::{panic_hook, Logger}};
 
 pub static LOGGER: Logger = Logger;
 
@@ -44,6 +44,13 @@ fn main() {
                 message,
                 tags: tags.into_boxed_slice(),
             }).expect("failed to insert transaction into ledger");
+        },
+        Command::Balance => {
+            info!("getting & displaying balances");
+            let balances = get_balance(&rw);
+            for (key, val) in balances.into_iter() {
+                info!("\x1b[33m[{key} balance]:\x1b[0m {}", val);
+            }
         },
     }
 

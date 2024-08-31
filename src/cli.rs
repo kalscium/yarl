@@ -13,6 +13,9 @@ pub enum Command {
     #[command(about="A mere test command")]
     Test,
 
+    #[command(about="Gets the current balance of your account")]
+    Balance,
+
     #[command(about="Inserts a `deposit` transaction into the ledger")]
     Deposit {
         #[arg(short='i', long, help="Sets the time of which the transaction had occured (defaults to now)")]
