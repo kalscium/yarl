@@ -72,7 +72,7 @@ pub fn get_sorted_transactions(rw: &RwTransaction) -> Vec<Transaction> {
     info!("sorting database transactions");
     
     // get the transactions in the database and sort them
-    let mut transactions =  rw.scan()
+    let mut transactions = rw.scan()
         .primary::<Transaction>()
         .unwrap()
         .all()

@@ -60,6 +60,7 @@ fn main() {
                 .into_iter()
                 .filter(|taction| tags.iter().all(|tag| taction.tags.contains(tag)))
                 .filter(|taction| currency.as_ref().map(|c| taction.currency == *c).unwrap_or(true))
+                .rev()
                 .collect::<Vec<_>>();
 
             let ron = to_ron(&transactions);
