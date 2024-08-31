@@ -1,8 +1,11 @@
 use chrono::Utc;
+use clap::Parser;
 use native_db::Builder;
-use yarl::database::{self, from_ron, to_ron, Transaction, TransactionKind};
+use yarl::{cli::Cli, database::{self, from_ron, to_ron, Transaction, TransactionKind}};
 
 fn main() {
+    let _cli = Cli::parse();
+    
     let models = database::models();
     let database = Builder::new().create_in_memory(&models).unwrap();
     let rw = database.rw_transaction().unwrap();
