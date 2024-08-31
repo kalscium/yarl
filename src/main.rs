@@ -1,7 +1,9 @@
+use std::fs;
+
 use chrono::Utc;
 use clap::Parser;
 use log::info;
-use yarl::{cli::{Cli, Command}, database::{self, get_balance, Transaction, TransactionKind}, log::{panic_hook, Logger}};
+use yarl::{cli::{Cli, Command}, database::{self, to_ron, Transaction, TransactionKind}, log::{panic_hook, Logger}};
 
 pub static LOGGER: Logger = Logger;
 
@@ -47,10 +49,21 @@ fn main() {
         },
         Command::Balance => {
             info!("getting & displaying balances");
-            let balances = get_balance(&rw);
+            let balances = database::get_balance(&rw);
             for (key, val) in balances.into_iter() {
                 info!("\x1b[33m[{key} balance]:\x1b[0m {}", val);
             }
+        },
+        Command::Export { path, tags, currency } => {
+            let transactions = database::get_sorted_transactions(&rw)
+                .into_iter()
+                .filter(|taction| tags.iter().all(|tag| taction.tags.contains(tag)))
+                .filter(|taction| currency.contains(&taction.currency))
+                .rev() // so that the most recent appears first
+                .collect::<Vec<_>>();
+
+            let ron = to_ron(&transactions);
+            fs::write(&path, ron).expect(&format!("failed to write exported RON to {path}"));
         },
     }
 

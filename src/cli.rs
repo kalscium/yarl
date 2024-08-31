@@ -16,6 +16,16 @@ pub enum Command {
     #[command(about="Gets the current balance of your account")]
     Balance,
 
+    #[command(about="Exports the ledger (most recent transaction first) in RON format")]
+    Export {
+        #[arg(index=1, help="The path to export the ledger to")]
+        path: String,
+        #[arg(short, long, num_args=.., help="Filters the exported transactions to have to contain the specified tags")]
+        tags: Vec<String>,
+        #[arg(short, long, num_args=.., help="Filters the exported transactions by currency")]
+        currency: Vec<String>,
+    },
+
     #[command(about="Inserts a `deposit` transaction into the ledger")]
     Deposit {
         #[arg(short='i', long, help="Sets the time of which the transaction had occured (defaults to now)")]

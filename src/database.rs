@@ -68,9 +68,9 @@ pub fn from_ron(ron: &str) -> Box<[Transaction]> {
     ron::from_str(ron).expect("provided RON is invalid (for transactions)")
 }
 
-pub fn get_balance(rw: &RwTransaction) -> HashMap<String, i32> {
-    let mut balances = HashMap::new();
-
+pub fn get_sorted_transactions(rw: &RwTransaction) -> Vec<Transaction> {
+    info!("sorting database transactions");
+    
     // get the transactions in the database and sort them
     let mut transactions =  rw.scan()
         .primary::<Transaction>()
@@ -79,6 +79,13 @@ pub fn get_balance(rw: &RwTransaction) -> HashMap<String, i32> {
         .map(|res| res.unwrap())
         .collect::<Vec<_>>();
     transactions.sort_unstable_by_key(|taction| taction.id);
+
+    transactions
+}
+
+pub fn get_balance(rw: &RwTransaction) -> HashMap<String, i32> {
+    let mut balances = HashMap::new();
+    let transactions = get_sorted_transactions(rw);
 
     // iterate through the transactions and update the balances
     for taction in transactions {
