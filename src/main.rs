@@ -1,7 +1,7 @@
 use chrono::Utc;
 use clap::Parser;
-use native_db::Builder;
-use yarl::{cli::Cli, database::{self, from_ron, to_ron, Transaction, TransactionKind}, log::{panic_hook, Logger}};
+use log::info;
+use yarl::{cli::{Cli, Command}, database::{self,  Transaction, TransactionKind}, log::{panic_hook, Logger}};
 
 pub static LOGGER: Logger = Logger;
 
@@ -9,26 +9,32 @@ fn main() {
     // set logger & panic handling
     let _ = log::set_logger(&LOGGER).map(|()| log::set_max_level(log::LevelFilter::Info));
     std::panic::set_hook(Box::new(panic_hook));
-    
-    let _cli = Cli::parse();
-    
+
+    // parse cli
+    let cli = Cli::parse();
+
+    // open database
     let models = database::models();
-    let database = Builder::new().create_in_memory(&models).unwrap();
+    let database = database::open_or_create(&models);
     let rw = database.rw_transaction().unwrap();
 
-    let time = Utc::now();
-    let transaction = Transaction {
-        id: time.timestamp_millis(),
-        time,
-        kind: TransactionKind::Deposit,
-        amount: 12423,
-        tags: Box::new([]),
-    };
+    // handle cli
+    match cli.command {
+        Command::Test => info!("hello, world!"),
+        Command::Deposit { time, currency, amount, message, tags } => {
+            let time = time.unwrap_or_else(|| Utc::now());
+            rw.insert(Transaction {
+                id: time.timestamp_millis(),
+                currency,
+                time,
+                kind: TransactionKind::Deposit,
+                amount,
+                message,
+                tags: tags.into_boxed_slice(),
+            }).expect("failed to insert transaction into ledger");
+        },
+    }
 
-    let ron = to_ron(&[transaction]);
-    println!("{ron}");
-    let transaction = from_ron(&ron)[0].clone();
-
-    rw.insert(transaction).unwrap();
     rw.commit().unwrap();
+    info!("successfully completed all actions");
 }
