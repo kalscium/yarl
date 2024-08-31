@@ -8,7 +8,7 @@ use native_db::{native_db, Builder, Database, Models, ToKey};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TransactionKind {
     Deposit,
-    Widthdraw,
+    Withdraw,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

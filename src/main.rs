@@ -33,6 +33,18 @@ fn main() {
                 tags: tags.into_boxed_slice(),
             }).expect("failed to insert transaction into ledger");
         },
+        Command::Withdraw { time, currency, amount, message, tags } => {
+            let time = time.unwrap_or_else(|| Utc::now());
+            rw.insert(Transaction {
+                id: time.timestamp_millis(),
+                currency,
+                time,
+                kind: TransactionKind::Withdraw,
+                amount,
+                message,
+                tags: tags.into_boxed_slice(),
+            }).expect("failed to insert transaction into ledger");
+        },
     }
 
     rw.commit().unwrap();
