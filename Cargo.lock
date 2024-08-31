@@ -802,6 +802,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "clap",
+ "log",
  "native_db",
  "native_model",
  "ron",

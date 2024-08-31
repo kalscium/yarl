@@ -1,9 +1,15 @@
 use chrono::Utc;
 use clap::Parser;
 use native_db::Builder;
-use yarl::{cli::Cli, database::{self, from_ron, to_ron, Transaction, TransactionKind}};
+use yarl::{cli::Cli, database::{self, from_ron, to_ron, Transaction, TransactionKind}, log::{panic_hook, Logger}};
+
+pub static LOGGER: Logger = Logger;
 
 fn main() {
+    // set logger & panic handling
+    let _ = log::set_logger(&LOGGER).map(|()| log::set_max_level(log::LevelFilter::Info));
+    std::panic::set_hook(Box::new(panic_hook));
+    
     let _cli = Cli::parse();
     
     let models = database::models();
