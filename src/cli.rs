@@ -36,7 +36,7 @@ pub enum Command {
         #[arg(short, long, default_value_t={"USD".to_string()}, help="The kind of currency the transaction involves")]
         currency: String,
         #[arg(index=1, help="The amount you've deposited")]
-        amount: u16,
+        amount: f32,
         #[arg(short, long, help="A message that describes the purpose of this transaction")]
         message: Option<String>,
         #[arg(short, long, num_args=.., help="The tags to give the transaction")]
@@ -50,7 +50,7 @@ pub enum Command {
         #[arg(short, long, default_value_t={"USD".to_string()}, help="The kind of currency the transaction involves")]
         currency: String,
         #[arg(index=1, help="The amount you've withdrawn")]
-        amount: u16,
+        amount: f32,
         #[arg(short, long, help="A message that describes the purpose of this transaction")]
         message: Option<String>,
         #[arg(short, long, num_args=.., help="The tags to give the transaction")]

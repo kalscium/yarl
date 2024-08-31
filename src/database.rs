@@ -25,7 +25,7 @@ pub struct Transaction {
 
     pub time: DateTime<Utc>,
     pub kind: TransactionKind,
-    pub amount: u16, // u16 cuz you shouldn't be managaing amounts larger than 65,535 on this piece of software (not that secure)
+    pub amount: f32,
     pub message: Option<String>,
     pub tags: Box<[String]>,
 }
@@ -83,18 +83,18 @@ pub fn get_sorted_transactions(rw: &RwTransaction) -> Vec<Transaction> {
     transactions
 }
 
-pub fn get_balance(rw: &RwTransaction) -> HashMap<String, i32> {
+pub fn get_balance(rw: &RwTransaction) -> HashMap<String, f64> {
     let mut balances = HashMap::new();
     let transactions = get_sorted_transactions(rw);
 
     // iterate through the transactions and update the balances
     for taction in transactions {
-        let balance = balances.get(&taction.currency).unwrap_or(&0);
+        let balance = balances.get(&taction.currency).unwrap_or(&0.0);
         balances.insert(
             taction.currency,
             match taction.kind {
-                TransactionKind::Deposit  => balance + taction.amount as i32,
-                TransactionKind::Withdraw => balance - taction.amount as i32,
+                TransactionKind::Deposit  => balance + taction.amount as f64,
+                TransactionKind::Withdraw => balance - taction.amount as f64,
             },
         );
     }
