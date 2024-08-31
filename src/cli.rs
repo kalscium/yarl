@@ -22,8 +22,8 @@ pub enum Command {
         path: String,
         #[arg(short, long, num_args=.., help="Filters the exported transactions to have to contain the specified tags")]
         tags: Vec<String>,
-        #[arg(short, long, num_args=.., help="Filters the exported transactions by currency")]
-        currency: Vec<String>,
+        #[arg(short, long, help="Filters the exported transactions by a currency")]
+        currency: Option<String>,
     },
 
     #[command(about="Inserts a `deposit` transaction into the ledger")]

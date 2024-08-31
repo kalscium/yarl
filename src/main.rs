@@ -58,8 +58,7 @@ fn main() {
             let transactions = database::get_sorted_transactions(&rw)
                 .into_iter()
                 .filter(|taction| tags.iter().all(|tag| taction.tags.contains(tag)))
-                .filter(|taction| currency.contains(&taction.currency))
-                .rev() // so that the most recent appears first
+                .filter(|taction| currency.as_ref().map(|c| taction.currency == *c).unwrap_or(true))
                 .collect::<Vec<_>>();
 
             let ron = to_ron(&transactions);
