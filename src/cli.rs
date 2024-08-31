@@ -26,6 +26,9 @@ pub enum Command {
         currency: Option<String>,
     },
 
+    #[command(about="Lists all the tags used in the ledger (most recent first)")]
+    Tags,
+
     #[command(about="Inserts a `deposit` transaction into the ledger")]
     Deposit {
         #[arg(short='i', long, help="Sets the time of which the transaction had occured (defaults to now)")]

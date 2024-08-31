@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashSet, fs};
 
 use chrono::Utc;
 use clap::Parser;
@@ -55,6 +55,7 @@ fn main() {
             }
         },
         Command::Export { path, tags, currency } => {
+            info!("exporting ledger to RON");
             let transactions = database::get_sorted_transactions(&rw)
                 .into_iter()
                 .filter(|taction| tags.iter().all(|tag| taction.tags.contains(tag)))
@@ -63,6 +64,18 @@ fn main() {
 
             let ron = to_ron(&transactions);
             fs::write(&path, ron).expect(&format!("failed to write exported RON to {path}"));
+        },
+        Command::Tags => {
+            info!("searching for tags in the ledger");
+            let tags = rw
+                .scan()
+                .primary::<Transaction>()
+                .unwrap()
+                .all()
+                .map(|taction| taction.unwrap().tags)
+                .flatten()
+                .fold(HashSet::new(), |mut set, tag| { set.insert(tag); set } );
+            info!("\x1b[33m[tags]:\x1b[0m {:?}", tags);
         },
     }
 
