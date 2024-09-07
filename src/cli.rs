@@ -26,6 +26,12 @@ pub enum Command {
         currency: Option<String>,
     },
 
+    #[command(about="Imports an exported ledger")]
+    Import {
+        #[arg(index=1, help="The path to the ledger to import")]
+        path: String,
+    },
+
     #[command(about="Lists all the tags used in the ledger (most recent first)")]
     Tags,
 

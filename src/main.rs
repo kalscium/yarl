@@ -3,7 +3,7 @@ use std::{collections::HashSet, fs};
 use chrono::Utc;
 use clap::Parser;
 use log::info;
-use yarl::{cli::{Cli, Command}, database::{self, to_ron, Transaction, TransactionKind}, log::{panic_hook, Logger}};
+use yarl::{cli::{Cli, Command}, database::{self, from_ron, to_ron, Transaction, TransactionKind}, log::{panic_hook, Logger}};
 
 pub static LOGGER: Logger = Logger;
 
@@ -65,6 +65,18 @@ fn main() {
 
             let ron = to_ron(&transactions);
             fs::write(&path, ron).expect(&format!("failed to write exported RON to {path}"));
+        },
+        Command::Import { path } => {
+            info!("importing RON as a ledger");
+
+            // Get imported data
+            let contents = fs::read_to_string(path).expect("failed to open file");
+            let transactions = from_ron(&contents);
+
+            // Insert into the database
+            for taction in transactions {
+                rw.insert(taction).unwrap();
+            }
         },
         Command::Tags => {
             info!("searching for tags in the ledger");
