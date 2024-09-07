@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use home::home_dir;
+use std::{collections::HashMap, path::Path};
 use log::{info, warn};
 use serde::{Serialize, Deserialize};
 use chrono::{DateTime, Utc};
@@ -37,13 +35,9 @@ pub fn models() -> Models {
     models
 }
 
-pub fn open_or_create<'a>(models: &'a Models) -> Database<'a> {
-    let path = home_dir()
-        .expect("unable to get home directory")
-        .join(".yarl.redb");
-
+pub fn open_or_create<'a>(path: impl AsRef<Path>, models: &'a Models) -> Database<'a> {
     // check if it exists or not
-    if path.is_file() {
+    if path.as_ref().is_file() {
         info!("found and opened transaction database");
         Builder::new()
             .open(models, path)

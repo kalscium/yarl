@@ -17,7 +17,7 @@ fn main() {
 
     // open database
     let models = database::models();
-    let database = database::open_or_create(&models);
+    let database = database::open_or_create(cli.path, &models);
     let rw = database.rw_transaction().unwrap();
 
     // handle cli

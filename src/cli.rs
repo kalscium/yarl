@@ -4,6 +4,9 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct Cli {
+    #[arg(index=1, help="The path of the yarl database")]
+    pub path: String,
+    
     #[command(subcommand)]
     pub command: Command,
 }
